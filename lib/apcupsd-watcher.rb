@@ -92,7 +92,7 @@ class ApcupsdWatcher
         parsed = Integer(value)
       elsif FLOAT_FIELDS.include? key
         parsed = Float(value)
-      elsif DATE_FIELDS.include? key
+      elsif DATE_FIELDS.include? key and value != 'N/A'
         parsed = Time.parse(value).iso8601
       end
 
