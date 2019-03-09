@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'ostruct'
+require 'apcupsd-watcher'
+
+trap "SIGINT" do
+  puts "kthxbye"
+  exit 130
+end
+
+class ApcupsdMqttOptionParser
+
+  def self.parse(args)
+
+    options = OpenStruct.new
+
+    # defaults
+    options.mqtt_host = 'localhost'
+    options.mqtt_port = 1883
+    options.mqtt_use_tls = false
+    options.mqtt_username = nil
+    options.mqtt_password = nil
+    options.mqtt_topic = 'apcupsd'
+
+    opt_parser = OptionParser.new do |opts|
+
+      opts.banner = "Usage: apcupsd-mqtt [options]"
+
+      opts.separator ""
+      opts.separator "Specific options:"
+
+      opts.on("--mqtt-host HOST", "MQTT host") {|u| options.mqtt_host = u }
+      opts.on("--mqtt-port PORT", "MQTT port") {|u| options.mqtt_port = u }
+      opts.on("--mqtt-username USERNAME", "MQTT username") {|u| options.mqtt_username = u }
+      opts.on("--mqtt-password PASSWORD", "MQTT password") {|u| options.mqtt_password = u }
+      opts.on("--[no-]mqtt-tls", "MQTT connect via TLS") {|u| options.mqtt_use_tls = u }
+      opts.on("--mqtt-topic TOPIC", "MQTT topic to send updates to") {|u| options.mqtt_topic = u }
+    end
+
+    opt_parser.parse!(args)
+
+    options
+  end
+end
+
+begin
+  options = ApcupsdMqttOptionParser.parse(ARGV)
+rescue => e
+  $stderr.puts e.to_s
+  exit 1
+end
+
+begin
+  watcher = ApcupsdWatcher.new(options)
+rescue => e
+  $stderr.puts e.to_s
+  exit 1
+end
+
+$stderr.puts watcher.run_loop
+exit 1
