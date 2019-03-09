@@ -1,3 +1,5 @@
+require 'time'
+
 require 'apcupsd-mqtt/mqtt'
 require 'apcupsd-mqtt/utilities'
 
@@ -10,6 +12,7 @@ class ApcupsdWatcher
   COMMAND_TIMEOUT = 2
   FLOAT_FIELDS = [ 'LINEV', 'LOADPCT', 'BCHARGE', 'TIMELEFT', 'LOTRANS', 'HITRANS', 'BATTV', 'NOMBATTV' ]
   INT_FIELDS = [ 'MBATTCHG', 'MINTIMEL', 'MAXTIME', 'ALARMDEL', 'NUMXFERS', 'TONBATT', 'CUMONBATT', 'NOMINV', 'NOMPOWER' ]
+  DATE_FIELDS = [ 'BATTDATE', 'DATE', 'STARTTIME', 'XOFFBATT', 'XONBATT', 'BATTDATE', 'DATE', 'STARTTIME', 'XOFFBATT', 'XONBATT' ]
   IGNORED_FIELDS = [ 'END APC' ]
 
   def initialize(opts)
@@ -89,6 +92,8 @@ class ApcupsdWatcher
         parsed = Integer(value)
       elsif FLOAT_FIELDS.include? key
         parsed = Float(value)
+      elsif DATE_FIELDS.include? key
+        parsed = Time.parse(value).iso8601
       end
 
       @upsname = value if key == 'UPSNAME'
