@@ -8,8 +8,8 @@ class ApcupsdWatcher
 
   UPDATE_INTERVAL = 2
   FULL_PUSH_INTERVAL = 60 # needs to be larger than UPDATE_INTERVAL
-  # STATUS_COMMAND = 'apcaccess -u'
-  STATUS_COMMAND = 'ssh info-pi /sbin/apcaccess -u'
+  STATUS_COMMAND = 'apcaccess -u'
+  # STATUS_COMMAND = 'ssh info-pi /sbin/apcaccess -u'
   COMMAND_TIMEOUT = 2
   FLOAT_FIELDS = [ 'LINEV', 'LOADPCT', 'BCHARGE', 'TIMELEFT', 'LOTRANS', 'HITRANS', 'BATTV', 'NOMBATTV' ]
   INT_FIELDS = [ 'MBATTCHG', 'MINTIMEL', 'MAXTIME', 'ALARMDEL', 'NUMXFERS', 'TONBATT', 'CUMONBATT', 'NOMINV', 'NOMPOWER' ]
