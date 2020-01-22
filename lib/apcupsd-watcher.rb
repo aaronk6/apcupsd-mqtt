@@ -1,4 +1,5 @@
 require 'time'
+require 'json'
 
 require 'apcupsd-mqtt/mqtt'
 require 'apcupsd-mqtt/utilities'
@@ -7,12 +8,12 @@ class ApcupsdWatcher
 
   UPDATE_INTERVAL = 2
   FULL_PUSH_INTERVAL = 60 # needs to be larger than UPDATE_INTERVAL
-  STATUS_COMMAND = 'apcaccess -u'
-  # STATUS_COMMAND = 'ssh info-pi /sbin/apcaccess -u'
+  # STATUS_COMMAND = 'apcaccess -u'
+  STATUS_COMMAND = 'ssh info-pi /sbin/apcaccess -u'
   COMMAND_TIMEOUT = 2
   FLOAT_FIELDS = [ 'LINEV', 'LOADPCT', 'BCHARGE', 'TIMELEFT', 'LOTRANS', 'HITRANS', 'BATTV', 'NOMBATTV' ]
   INT_FIELDS = [ 'MBATTCHG', 'MINTIMEL', 'MAXTIME', 'ALARMDEL', 'NUMXFERS', 'TONBATT', 'CUMONBATT', 'NOMINV', 'NOMPOWER' ]
-  DATE_FIELDS = [ 'BATTDATE', 'DATE', 'STARTTIME', 'XOFFBATT', 'XONBATT', 'BATTDATE', 'DATE', 'STARTTIME', 'XOFFBATT', 'XONBATT' ]
+  DATE_FIELDS = [ 'BATTDATE', 'DATE', 'STARTTIME', 'XOFFBATT', 'XONBATT' ]
   IGNORED_FIELDS = [ 'END APC' ]
 
   def initialize(opts)
@@ -46,6 +47,7 @@ class ApcupsdWatcher
         loop_counter = 0
       end
 
+      @mqtt.autodiscovery(@upsname, new_status) if status == nil
       publish_updates(status, new_status)
 
       status = new_status
@@ -58,7 +60,7 @@ class ApcupsdWatcher
   def publish_updates(old_status, new_status)
     updates = get_updates(old_status, new_status)
     return if updates.empty?
-    @mqtt.publish(updates, @upsname + '/')
+    @mqtt.publish(@upsname, updates)
   end
 
   def get_updates(old_status, new_status)
@@ -98,8 +100,7 @@ class ApcupsdWatcher
 
       @upsname = value if key == 'UPSNAME'
 
-      dict["raw/" + key] = value
-      dict[key.downcase] = parsed if parsed
+      dict[key.downcase] = parsed != nil ? parsed : value
     end
     add_extra_fields(dict)
   end

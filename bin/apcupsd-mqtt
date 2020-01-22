@@ -22,6 +22,7 @@ class ApcupsdMqttOptionParser
     options.mqtt_username = nil
     options.mqtt_password = nil
     options.mqtt_topic = 'apcupsd'
+    options.mqtt_autodiscovery_prefix = 'homeassistant'
 
     opt_parser = OptionParser.new do |opts|
 
@@ -36,6 +37,7 @@ class ApcupsdMqttOptionParser
       opts.on("--mqtt-password PASSWORD", "MQTT password") {|u| options.mqtt_password = u }
       opts.on("--[no-]mqtt-tls", "MQTT connect via TLS") {|u| options.mqtt_use_tls = u }
       opts.on("--mqtt-topic TOPIC", "MQTT topic to send updates to") {|u| options.mqtt_topic = u }
+      opts.on("--mqtt-autodiscovery-prefix PREFIX", "Prefix for MQTT auto-discovery") {|u| options.mqtt_autodiscovery_prefix = u }
     end
 
     opt_parser.parse!(args)
