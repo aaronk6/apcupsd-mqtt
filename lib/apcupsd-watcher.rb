@@ -13,8 +13,8 @@ class ApcupsdWatcher
   COMMAND_TIMEOUT = 2
   FLOAT_FIELDS = [ 'LINEV', 'LOADPCT', 'BCHARGE', 'TIMELEFT', 'LOTRANS', 'HITRANS', 'BATTV', 'NOMBATTV' ]
   INT_FIELDS = [ 'MBATTCHG', 'MINTIMEL', 'MAXTIME', 'ALARMDEL', 'NUMXFERS', 'TONBATT', 'CUMONBATT', 'NOMINV', 'NOMPOWER' ]
-  DATE_FIELDS = [ 'BATTDATE', 'DATE', 'STARTTIME', 'XOFFBATT', 'XONBATT' ]
-  IGNORED_FIELDS = [ 'END APC' ]
+  DATE_FIELDS = [ 'BATTDATE', 'DATE', 'STARTTIME', 'XOFFBATT', 'XONBATT', 'LASTSTEST' ]
+  STRING_FIELDS = [ 'APC', 'HOSTNAME', 'VERSION', 'UPSNAME', 'CABLE', 'DRIVER', 'UPSMODE', 'MODEL', 'STATUS', 'SENSE', 'LASTXFER', 'STATFLAG', 'SERIALNO', 'FIRMWARE', 'SELFTEST' ]
 
   def initialize(opts)
     @upsname = 'unknown'
@@ -81,11 +81,13 @@ class ApcupsdWatcher
 
   def parse_apcaccess_output(str)
     dict = {}
+    (FLOAT_FIELDS + INT_FIELDS + DATE_FIELDS + STRING_FIELDS).each do |key|
+      dict[key.downcase] = nil
+    end
+
     str.split("\n").map! do |line|
       key, value = line.split(":", 2)
       key.strip!
-
-      next if IGNORED_FIELDS.include? key
 
       value.strip!
       parsed = nil
