@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name           = 'apcupsd-mqtt'
-  s.version        = '0.1.0'
-  s.date           = '2020-01-22'
+  s.version        = '0.2.0'
+  s.date           = '2020-03-22'
   s.summary        = "apcupsd MQTT"
   s.description    = "Collects metrics from apcaccess command-line utilitiy and publishes them via MQTT"
   s.authors        = ["aaronk6"]
