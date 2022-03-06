@@ -32,6 +32,9 @@ class ApcupsdMqtt
 
   def publish(devicename, updates)
     updates.each do |key, payload|
+      # avoid error in Home Assistant when sending empty values where a timestamp is expected
+      next if HA_DEVICE_CLASS_MAPPING[key] == "timestamp" and payload == nil
+
       @client.publish([ @topic, devicename, key, HA_STATE ].join('/'), payload)
     end
   end

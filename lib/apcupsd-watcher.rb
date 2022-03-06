@@ -99,13 +99,15 @@ class ApcupsdWatcher
         parsed = Integer(value)
       elsif FLOAT_FIELDS.include? key
         parsed = Float(value)
-      elsif DATE_FIELDS.include? key and value != 'N/A'
-        parsed = Time.parse(value).iso8601
+      elsif DATE_FIELDS.include? key
+        parsed = ["", 'N/A'].include?(value) ? nil : Time.parse(value).iso8601
+      elsif STRING_FIELDS.include? key
+        parsed = value
       end
 
       @upsname = value if key == 'UPSNAME'
 
-      dict[key.downcase] = parsed != nil ? parsed : value
+      dict[key.downcase] = parsed
     end
     add_extra_fields(dict)
   end
