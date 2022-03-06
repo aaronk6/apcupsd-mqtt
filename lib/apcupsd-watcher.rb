@@ -82,9 +82,6 @@ class ApcupsdWatcher
 
   def parse_apcaccess_output(str)
     dict = {}
-    (FLOAT_FIELDS + INT_FIELDS + DATE_FIELDS + STRING_FIELDS).each do |key|
-      dict[key.downcase] = nil
-    end
 
     str.split("\n").map! do |line|
       key, value = line.split(":", 2)
