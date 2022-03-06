@@ -15,6 +15,7 @@ class ApcupsdWatcher
   INT_FIELDS = [ 'MBATTCHG', 'MINTIMEL', 'MAXTIME', 'ALARMDEL', 'NUMXFERS', 'TONBATT', 'CUMONBATT', 'NOMINV', 'NOMPOWER' ]
   DATE_FIELDS = [ 'BATTDATE', 'DATE', 'STARTTIME', 'XOFFBATT', 'XONBATT', 'LASTSTEST' ]
   STRING_FIELDS = [ 'APC', 'HOSTNAME', 'VERSION', 'UPSNAME', 'CABLE', 'DRIVER', 'UPSMODE', 'MODEL', 'STATUS', 'SENSE', 'LASTXFER', 'STATFLAG', 'SERIALNO', 'FIRMWARE', 'SELFTEST' ]
+  IGNORE_FIELDS = [ 'END APC' ]
 
   def initialize(opts)
     @upsname = 'unknown'
@@ -88,6 +89,8 @@ class ApcupsdWatcher
     str.split("\n").map! do |line|
       key, value = line.split(":", 2)
       key.strip!
+
+      next if IGNORE_FIELDS.include? key
 
       value.strip!
       parsed = nil
